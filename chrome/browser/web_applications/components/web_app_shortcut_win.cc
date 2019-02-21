@@ -340,12 +340,18 @@ void CreateIconAndSetRelaunchDetails(
     const base::FilePath& icon_file,
     HWND hwnd,
     const web_app::ShortcutInfo& shortcut_info) {
-  base::CommandLine command_line =
+	base::CommandLine command_line(base::CommandLine::NO_PROGRAM);
+#if 0
       shell_integration::CommandLineArgsForLauncher(shortcut_info.url,
                                                     shortcut_info.extension_id,
                                                     shortcut_info.profile_path);
 
+#endif
   command_line.SetProgram(GetChromeProxyPath());
+  const base::CommandLine::StringVector& args = base::CommandLine::ForCurrentProcess()->GetArgs();
+  if (args.size())
+	  command_line.AppendArgNative(args[0]);
+
   ui::win::SetRelaunchDetailsForWindow(command_line.GetCommandLineString(),
                                        shortcut_info.title, hwnd);
 
